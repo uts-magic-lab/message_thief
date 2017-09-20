@@ -13,8 +13,6 @@ So if a topic has only a Subscriber you cannot get the
 information as there is no connection header.
 """
 
-#TODO: Do the same for services
-
 
 def get_topic_connection_dict(topic_name):
     sub = rospy.Subscriber(topic_name, AnyMsg, None, queue_size=1)
@@ -38,11 +36,16 @@ def get_topic_connection_dict(topic_name):
 
 
 if __name__ == '__main__':
+    import sys
     print("Initializing node...")
     rospy.init_node('get_msg_description')
     # In another shell
     # rostopic pub /testpub aruco_msgs/MarkerArray [TAB] -r1
-    d = get_topic_connection_dict('/testpub')
+    argv = rospy.myargv(sys.argv)
+    if len(argv) > 1:
+        d = get_topic_connection_dict(argv[1])
+    else:
+        d = get_topic_connection_dict('/testpub')
     print d
 
 # You get something like 

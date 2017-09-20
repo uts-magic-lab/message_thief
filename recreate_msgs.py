@@ -439,7 +439,9 @@ def create_packages_and_messages_from_definition_and_type(message_type,
     add_cmakelists_and_packagexml(
         main_pkg_name, tmpdir, main_pkg_dependencies, main_pkg_msgs)
 
-    # Ignore std_msgs from the rest?
+    tmpdir_no_src = tmpdir[:-4]
+    print("Done, your workspace is at: " + tmpdir_no_src)
+    return tmpdir_no_src
 
 if __name__ == '__main__':
     # Example input
