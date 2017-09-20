@@ -143,14 +143,12 @@ def add_packagexml(pkg_name, workspace_path, dependencies):
         endidx = curr_xml.index("  <!-- __TEMPLATE_BUILD_DEPENDS_END__ -->")
         endidx_block = endidx + \
             len("  <!-- __TEMPLATE_BUILD_DEPENDS_END__ -->")
-        print("XML BUILD DEPEND BLOCK LOOKS LIKE:")
-        print(curr_xml[startidx:endidx_block])
+
         curr_deps = curr_xml[startidx_deps:endidx]
         curr_deps = curr_deps.replace('<build_depend>', '')
         curr_deps = curr_deps.replace('</build_depend>', '')
         curr_deps = curr_deps.strip()
         curr_deps = curr_deps.split(' ')
-        print("........... Got current xml deps: " + str(curr_deps))
 
         for d in curr_deps:
             clean_dep_list.append(d)
@@ -167,10 +165,6 @@ def add_packagexml(pkg_name, workspace_path, dependencies):
         new_block = "  <!-- __TEMPLATE_BUILD_DEPENDS_START__ -->\n" + \
             build_deps_str + "\n  <!-- __TEMPLATE_BUILD_DEPENDS_END__ -->"
 
-        print("---- substituting:")
-        print(curr_xml[startidx:endidx_block])
-        print("------ with:")
-        print(new_block)
         curr_xml = curr_xml.replace(curr_xml[startidx:endidx_block],
                                     new_block)
         # run depends
@@ -189,10 +183,6 @@ def add_packagexml(pkg_name, workspace_path, dependencies):
         new_block = "  <!-- __TEMPLATE_RUN_DEPENDS_START__ -->\n" + \
             run_deps_str + "\n  <!-- __TEMPLATE_RUN_DEPENDS_END__ -->"
 
-        print("---- substituting:")
-        print(curr_xml[startidx:endidx_block])
-        print("------ with:")
-        print(new_block)
         curr_xml = curr_xml.replace(curr_xml[startidx:endidx_block],
                                     new_block)
 
@@ -440,7 +430,12 @@ def create_packages_and_messages_from_definition_and_type(message_type,
         main_pkg_name, tmpdir, main_pkg_dependencies, main_pkg_msgs)
 
     tmpdir_no_src = tmpdir[:-4]
-    print("Done, your workspace is at: " + tmpdir_no_src)
+    num_pkgs = len(pkgs_msgs)
+    print("\nGenerated " + str(num_pkgs) + " packages:")
+    for k in pkgs_msgs:
+        print("  Package: " + k)
+        print("     Messages: " + str(pkgs_msgs[k]))
+    print("\nDone, your workspace is at: " + tmpdir_no_src)
     return tmpdir_no_src
 
 if __name__ == '__main__':

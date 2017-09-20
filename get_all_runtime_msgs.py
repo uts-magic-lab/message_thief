@@ -706,8 +706,6 @@ __RUN_DEPEND_BLOCK__
     make_tarfile(parent_tmpdir + '/all_msgs.tar.gz', parent_tmpdir)
     print "Find a all_msgs.tar.gz at " + parent_tmpdir
 
-    exit(0)
-
     # Do hacky Python copy
     from shutil import copytree
     tmpdirpy = tempfile.mkdtemp(prefix="python_msgs")
