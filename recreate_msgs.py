@@ -368,9 +368,10 @@ def get_dependencies_from_message_definition(msg_def):
     dependencies = []
     lines = msg_def.split('\n')
     for ll in lines:
+        ll = ll.strip()
         if ll != '' and not ll.startswith('#'):
             subtypes = ll.split('/')
-            if len(subtypes) > 1:
+            if len(subtypes) > 1 and '#' not in subtypes[0]:
                 dependencies.append(subtypes[0])
     if not dependencies:
         dependencies.append('std_msgs')
@@ -378,12 +379,20 @@ def get_dependencies_from_message_definition(msg_def):
 
 
 def create_packages_and_messages_from_definition_and_type(message_type,
-                                                          message_definition):
+                                                          message_definition,
+                                                          already_existing_ws=None):
     # Create a temporal workspace
     tmpdir = tempfile.mkdtemp(prefix="catkin_ws")
     tmpdir = tmpdir + '/src'
     os.mkdir(tmpdir)
-    print("Working on temporal dir: " + tmpdir)
+    if already_existing_ws:
+        print("Already existing folder provided: " + str(already_existing_ws))
+        if not os.path.isdir(already_existing_ws):
+            print(already_existing_ws + " is not a directory, using tmpdir.")
+        else:
+            tmpdir = already_existing_ws
+
+    print("Working on dir: " + tmpdir)
 
     print("Working on message: " + message_type)
 
@@ -436,7 +445,7 @@ def create_packages_and_messages_from_definition_and_type(message_type,
         print("  Package: " + k)
         print("     Messages: " + str(pkgs_msgs[k]))
     print("\nDone, your workspace is at: " + tmpdir_no_src)
-    return tmpdir_no_src
+    return tmpdir_no_src, pkgs_msgs
 
 if __name__ == '__main__':
     # Example input

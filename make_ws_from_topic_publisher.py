@@ -16,7 +16,7 @@ if __name__ == '__main__':
     argv = rospy.myargv(sys.argv)
     topic_name = argv[1]
     d = get_topic_connection_dict(topic_name)
-    path = create_packages_and_messages_from_definition_and_type(d['type'],
+    path, _ = create_packages_and_messages_from_definition_and_type(d['type'],
         d['message_definition'])
     print("Play with topic: " + topic_name + " with the ready to compile workspace: " + path)
     print("Just do:")
