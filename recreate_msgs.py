@@ -247,8 +247,10 @@ def add_cmakeliststxt(pkg_name, workspace_path, dependencies, pkg_msgs_names):
             startidx_deps = startidx + len("#__TEMPLATE_DEPENDENCIES_START__")
             endidx = curr_cmakelists.index("#__TEMPLATE_DEPENDENCIES_END__")
             endidx_block = endidx + len("#__TEMPLATE_DEPENDENCIES_END__")
+
             curr_deps = curr_cmakelists[startidx_deps:endidx].strip()
             curr_deps = curr_deps.split(' ')
+
 
             for d in clean_dep_list:
                 if d not in curr_deps:
@@ -260,13 +262,20 @@ def add_cmakeliststxt(pkg_name, workspace_path, dependencies, pkg_msgs_names):
             full_block = "#__TEMPLATE_DEPENDENCIES_START__\n" + \
                 deps + "\n#__TEMPLATE_DEPENDENCIES_END__"
 
+            last_endidx_block = endidx_block
+            second_part = curr_cmakelists[last_endidx_block:]
+
+            endidx = curr_cmakelists.index("#__TEMPLATE_DEPENDENCIES_END__")
+            endidx_block = endidx + len("#__TEMPLATE_DEPENDENCIES_END__")
             curr_cmakelists = curr_cmakelists.replace(
                 curr_cmakelists[startidx:endidx_block], full_block)
 
+
             # Do it twice more, as this is present three times
-            last_endidx_block = endidx_block
-            first_part = curr_cmakelists[:last_endidx_block]
-            second_part = curr_cmakelists[last_endidx_block:]
+            endidx = curr_cmakelists.index("#__TEMPLATE_DEPENDENCIES_END__")
+            endidx_block = endidx + len("#__TEMPLATE_DEPENDENCIES_END__")
+            first_part = curr_cmakelists[:endidx_block]
+
             startidx = second_part.index("#__TEMPLATE_DEPENDENCIES_START__")
             startidx_deps = startidx + len("#__TEMPLATE_DEPENDENCIES_START__")
             endidx = second_part.index("#__TEMPLATE_DEPENDENCIES_END__")
@@ -275,8 +284,12 @@ def add_cmakeliststxt(pkg_name, workspace_path, dependencies, pkg_msgs_names):
             second_part = second_part.replace(
                 second_part[startidx:endidx_block], full_block)
 
+
+            endidx = second_part.index("#__TEMPLATE_DEPENDENCIES_END__")
+            endidx_block = endidx + len("#__TEMPLATE_DEPENDENCIES_END__")
             last_endidx_block = endidx_block
             third_part = second_part[last_endidx_block:]
+
             second_part = second_part[:last_endidx_block]
             startidx = third_part.index("#__TEMPLATE_DEPENDENCIES_START__")
             startidx_deps = startidx + len("#__TEMPLATE_DEPENDENCIES_START__")
@@ -290,10 +303,17 @@ def add_cmakeliststxt(pkg_name, workspace_path, dependencies, pkg_msgs_names):
 
         if len(pkg_msgs_names) > 0:
             # Grab current messages already there
-            startidx = curr_cmakelists.index("    #__TEMPLATE_MSGS_START__")
-            startidx_msgs = startidx + len("    #__TEMPLATE_MSGS_START__")
-            endidx = curr_cmakelists.index("    #__TEMPLATE_MSGS_END__")
-            endidx_block = endidx + len("    #__TEMPLATE_MSGS_END__")
+            try:
+                startidx = curr_cmakelists.index("    #__TEMPLATE_MSGS_START__")
+                startidx_msgs = startidx + len("    #__TEMPLATE_MSGS_START__")
+                endidx = curr_cmakelists.index("    #__TEMPLATE_MSGS_END__")
+                endidx_block = endidx + len("    #__TEMPLATE_MSGS_END__")
+            except ValueError as e:
+                print("error finding substring: " + str(e))
+                print("current cmakelists:\n--------------")
+                print(curr_cmakelists)
+                print("----------------")
+                exit(0)
             curr_msgs = curr_cmakelists[startidx_msgs:endidx]
             curr_msgs_clean = curr_msgs.strip()
             curr_msgs = curr_msgs_clean.split(' ')

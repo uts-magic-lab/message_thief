@@ -2,6 +2,7 @@
 
 import rospy
 from rospkg import RosPack
+from rospkg.common import ResourceNotFound
 import rosgraph.masterapi
 from rostopic import get_topic_type
 from rosservice import get_service_type
@@ -279,7 +280,12 @@ if __name__ == '__main__':
     for t in types_list:
         if '/' in t:
             pkg, msg_name = t.split('/')
-            pkg_path = rp.get_path(pkg)
+            try:
+                pkg_path = rp.get_path(pkg)
+            except ResourceNotFound as e:
+                print("Error: " + str(e))
+                print("This means you dont have that package and you need it in the robot!")
+                continue
             msg_full_path = pkg_path + "/msg/" + msg_name + ".msg"
             if msg_full_path not in message_file_paths:
                 message_file_paths.append(msg_full_path)
